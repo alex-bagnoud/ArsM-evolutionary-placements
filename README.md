@@ -270,7 +270,7 @@ mkdir 5-epa_reid_otus
 * MAFFT version 7
 * ```--addfragments``` option with default parameters
 * input file 1 (bmge-parsed alignement): ```3-arsm_ref_tree/7-centered80_arsm_protdb_uc90_bmge.fasta```
-* input file 2 (otus sequences): ```1-reid_otus/12-prot_otus_uc90.fasta```
+* input file 2 (otus sequences): ```1-reid_otus/13-prot_otus_uc90.fasta```
 * output: ```5-epa_reid_otus/1-1-reid_otus_added_to_ref_alignment_mafft.fasta```
 
 Parse the file to make it RAxML-compatible
