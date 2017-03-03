@@ -252,8 +252,9 @@ less 4-epa_jia_otus/1-1-jia_otus_added_to_ref_alignment_mafft.fasta | tr '[|]:)(
 ```
 
 ##### 4.2) EPA analysis with RAxML
+Be sure the select the  substitution model that was selected by IQ-TREE. In this case, LG+F+I+G4 IQ-TREE model corresponds to PROTGAMMAILGF RAxML model.
 ```
-raxmlHPC -f v -s 4-epa_jia_otus/1-2-jia_otus_added_to_ref_alignment_mafft.fasta -t 3-arsm_ref_tree/8-centered80_arsm_protdb_uc90_bmge.fasta.contree -m PROTGAMMAILGF --epa-keep-placements 1 -n epa
+raxmlHPC -f v -s 4-epa_jia_otus/1-2-jia_otus_added_to_ref_alignment_mafft.fasta -t 3-arsm_ref_tree/8-centered80_arsm_protdb_uc90_bmge.fasta.contree -m PROTGAMMAILGF --epa-keep-placements 1 -n epa_jia
 ```
 
 Move manually and rename all output files	this way:  ```4-epa_jia_otus/2-*```
@@ -279,8 +280,10 @@ less 5-epa_reid_otus/1-1-reid_otus_added_to_ref_alignment_mafft.fasta | tr '[|]:
 ```
 
 ##### 5.2) EPA analysis with RAxML
+Be sure the select the  substitution model that was selected by IQ-TREE. In this case, LG+F+I+G4 IQ-TREE model corresponds to PROTGAMMAILGF RAxML model.
+
 ```
-raxmlHPC -f v -s 5-epa_reid_otus/1-2-reid_otus_added_to_ref_alignment_mafft.fasta -t 3-arsm_ref_tree/8-centered80_arsm_protdb_uc90_bmge.fasta.contree -m PROTGAMMAILGF --epa-keep-placements 1 -n epa
+raxmlHPC -f v -s 5-epa_reid_otus/1-2-reid_otus_added_to_ref_alignment_mafft.fasta -t 3-arsm_ref_tree/8-centered80_arsm_protdb_uc90_bmge.fasta.contree -m PROTGAMMAILGF --epa-keep-placements 1 -n epa_reid
 ```
 
 Move manually and rename all output files	this way:  ```5-reid_jia_otus/2-*```
