@@ -66,7 +66,7 @@ output: ```S1	171379	166197```
 ##### 1.4) Dereplication and discargding of singletons
 ```
 usearch -fastx_uniques 1-reid_otus/3-filtered.fasta -fastaout 1-reid_otus/4-1_uniques.fasta -relabel Uniq -sizeout
-usearch -sortbysize 1-reid_otus/4-uniques.fasta -fastaout 1-reid_otus/4-2_uniques_nosingle.fasta -minsize 2
+usearch -sortbysize 1-reid_otus/4-1_uniques.fasta -fastaout 1-reid_otus/4-2_uniques_nosingle.fasta -minsize 2
 ```
 
 ##### 1.5) Translation of uniques sequences to proteins sequences
@@ -184,7 +184,7 @@ sed 's/>.*/&;size=2;/' 3-arsm_ref_tree/2-1_arsm_11protdb_sorted.fasta > 3-arsm_r
 usearch -sortbylength 0-input_files/arsm_723protdb_non-char.fasta -fastaout 3-arsm_ref_tree/2-3_arsm_723protdb_sorted.fasta
 ```
 
-##### 3.3) Center the ArsM db using a similarity treshold of 80% with ArsM OTUs:
+##### 3.3) Center the ArsM db of uncharacterized proteins using a similarity treshold of 80% with ArsM OTUs:
 ```
 usearch -usearch_global 3-arsm_ref_tree/2-3_arsm_723protdb_sorted.fasta -db 3-arsm_ref_tree/1-arsm_prot_otus_uc90.fasta -id 0.8 -matched 3-arsm_ref_tree/3-centered80_arsm_723protdb.fasta
 ```
