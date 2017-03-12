@@ -26,6 +26,7 @@ Script for processing Illumina MiSeq reads from arsM amplicons sequencing
 * BLAST 2.2.30+
 * RAxML v.8.2.9
 * RF_fisher.R (in-house R script)
+* seqtk v.1.2 (https://github.com/lh3/seqtk)
 
 
 
@@ -286,6 +287,90 @@ raxmlHPC -f v -s 5-epa_reid_otus/1-2-reid_otus_added_to_ref_alignment_mafft.fast
 ```
 
 Move manually and rename all output files	this way:  ```5-reid_jia_otus/2-*```
+
+
+
+#### 6) Downscaling Reid's reads
+Because of the huge discrepancy between the number of reads from Reid's sequencing (166'197 trimmed reads) and the reads from other sequencing projects based on Jia's primers sets (531 clones), 531 Reid's reads were randomly selected, before proceeding with the rest of the pipeline. This intend to increase the comparability of the diversity spectrum of the 2 primers sets.
+
+
+##### 6.1) Use seqtk (v.1.2) to subsample the trimmed raw reads
+```
+seqtk sample -s100 1-reid_otus/3-filtered.fasta 531 > 6-downscaling_test/1-531subset_reads.fasta
+```
+
+##### 6.2) Dereplication and discargding of singletons
+```
+usearch -fastx_uniques 6-downscaling_test/1-531subset_reads.fasta -fastaout 6-downscaling_test/2-uniques.fasta -relabel Uniq -sizeout
+```
+
+##### 6.3) Translation of uniques sequences to proteins sequences
+```
+transeq 6-downscaling_test/2-uniques.fasta 6-downscaling_test/3-uniques_translated_6frames.fasta -table 11 -frame=6
+```
+
+##### 6.4) Fishing the correct reading frames by blasting translated uniques reads on arSM reference sequence
+```
+blastp -query 6-downscaling_test/3-uniques_translated_6frames.fasta -db 1-reid_otus/6-2_ArsM_blast_db -out 6-downscaling_test/4-blast_report.tab -outfmt "6 sseqid qseqid qstart qend evalue bitscore pident" -max_target_seqs 1
+```
+
+##### 6.5) BLAST output parsing
+This in-house R script parses to previous BLAST ouput, selects for each translated sequence which of the reading frame matches ArsM proteins, and extract the correct proteins sequences into a fasta file.
+```
+scripts/RF_fisher.R -b 6-downscaling_test/4-blast_report.tab -t 6-downscaling_test/3-uniques_translated_6frames.fasta -f 6-downscaling_test/5-prot.fasta -c 6-downscaling_test/5-parsed_blast_report.csv
+```
+##### 6.6) Extract uniques proteins sequences
+```
+usearch -fastx_uniques 6-downscaling_test/5-prot.fasta -fastaout 6-downscaling_test/6-prot_uniques.fasta -relabel uniq_prot -sizeout
+```
+
+##### 6.7) Define clusters with 97%-similarity threshold
+```
+usearch -cluster_otus 6-downscaling_test/6-prot_uniques.fasta -otus 6-downscaling_test/7-prot_otus.fasta -relabel Otu
+```
+
+##### 6.8) Translation of the reads to protein sequences (in all 6 reading frames)
+```
+transeq 6-downscaling_test/1-531subset_reads.fasta 6-downscaling_test/8-t531subset_translated.fasta -table 11 -frame=6
+```
+
+##### 6.9) Build OTU table (based on 97%-similarity threshold)
+```
+usearch -usearch_global 6-downscaling_test/8-t531subset_translated.fasta -db 6-downscaling_test/7-prot_otus.fasta -id .97 -otutabout 6-downscaling_test/9-prot_otu_table.txt
+```
+
+##### 6.10) Add size information for each OTU
+```
+scripts/add_size_to_otus.R -t 6-downscaling_test/9-prot_otu_table.txt -i 6-downscaling_test/7-prot_otus.fasta -f 6-downscaling_test/10-prot_otus_size.fasta
+```
+
+##### 6.11) Cluster protein OTUs sequences at 90% similarity
+```
+usearch -cluster_fast 6-downscaling_test/10-prot_otus_size.fasta -id 0.9 -sort size -centroids 6-downscaling_test/11-prot_otus_uc90.fasta
+```
+
+##### 6.12) Alignement with mafft
+* http://mafft.cbrc.jp/alignment/software/
+* MAFFT version 7
+* ```--addfragments``` option with default parameters
+* input file 1 (bmge-parsed alignement): ```3-arsm_ref_tree/7-centered80_arsm_protdb_uc90_bmge.fasta```
+* input file 2 (otus sequences): ```6-downscaling_test/11-prot_otus_uc90.fasta```
+* output: ```6-downscaling_test/12-addfragments_mafft.fasta```
+
+##### 6.13) Parse the file to make it RAxML-compatible
+```
+less 6-downscaling_test/12-addfragments_mafft.fasta | tr '[|]:)("/,;' '_' > 6-downscaling_test/13-addfragments_mafft.fasta
+```
+
+##### 6.14) EPA analysis with RAxML
+Be sure the select the  substitution model that was selected by IQ-TREE. In this case, LG+F+I+G4 IQ-TREE model corresponds to PROTGAMMAILGF RAxML model.
+```
+raxmlHPC -f v -s 6-downscaling_test/13-addfragments_mafft.fasta -t 3-arsm_ref_tree/8-centered80_arsm_protdb_uc90_bmge.fasta.contree -m PROTGAMMAILGF --epa-keep-placements 1 -n epa_reid_ds
+```
+
+Move manually and rename all output files	this way:  ```6-downscaling_test/14-*```
+
+
 
 
 
