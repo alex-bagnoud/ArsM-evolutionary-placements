@@ -5,7 +5,7 @@ This script describes the processing of Illumina MiSeq reads from arsM amplicons
 Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, and Rizlan Bernier-Latmani (2017). [**Arsenic Methylation Dynamics in a Rice Paddy Soil Anaerobic Enrichment Culture**](https://dx.doi.org/10.1021/acs.est.7b02970). Environmental Science & Technology. DOI: 10.1021/acs.est.7b02970
 
 #### Table of content
-**[Download raw fastq files from NCBI SRA](#0)download-fastq-files-from-SRA)**<br>
+**[Download raw fastq files from NCBI SRA](#0-download-fastq-files-from-SRA)**<br>
 
 
 #### Input files
