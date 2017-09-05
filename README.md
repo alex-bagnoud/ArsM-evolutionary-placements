@@ -439,7 +439,8 @@ for s in 0-input_files/*_R1*.fastq; do
 done
 ```
 output:
-```SRR5972856	171387	166201
+```
+SRR5972856	171387	166201
 SRR5972857	342190	328212```
 
 
