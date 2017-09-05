@@ -1,11 +1,15 @@
 # ArsM-evolutionary-placements
 
-Script for processing Illumina MiSeq reads from arsM amplicons sequencing
+This script describes the processing of Illumina MiSeq reads from arsM amplicons sequencing. The results were published here:
+
+Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, and Rizlan Bernier-Latmani (2017). Arsenic Methylation Dynamics in a Rice Paddy Soil Anaerobic Enrichment Culture. Environmental Science & Technology. DOI: 10.1021/acs.est.7b02970
+
 
 #### Input files
-1) Raw fastq files (R1 and R2 -> upload to NCBI)
 
-2) ArsM db (-> upload it)
+1) Raw fastq files to download from NCBI SRA (see below)
+
+2) ArsM database files (uploaded to this github repo under "0-input_files/")
 
 
 #### Primers used:
@@ -26,10 +30,31 @@ Script for processing Illumina MiSeq reads from arsM amplicons sequencing
 * BLAST 2.2.30+
 * RAxML v.8.2.9
 * RF_fisher.R (in-house R script)
+* add_size_to_otus.R (in-house R script)
+* add_size_to_otus.R (in-house R script)
+* extract_megan_annotations.R (in-house R script)
 * seqtk v.1.2 (https://github.com/lh3/seqtk)
+* iTOL v.3 (http://itol.embl.de/)
+* Inkscape v.0.91
+* DIAMOND v.0.8.37
+* MEGAN v.6.7.11
+* fastq-dump v.2.8.2 from SRA Toolkit
 
+#### 0) Download fastq files from SRA
 
+##### 0.1) Download the fastq file of the paddy soil sample
+```
+fastq-dump --split-files SRR5972856
+mv SRR5972856_1.fastq 0-input_files/SRR5972856_R1.fastq
+mv SRR5972856_2.fastq 0-input_files/SRR5972856_R2.fastq
+```
 
+##### 0.2) Download the fastq file of the anaerobic enrichment cultures
+```
+fastq-dump --split-files SRR5972857
+mv SRR5972857_1.fastq 0-input_files/SRR5972857_R1.fastq
+mv SRR5972857_2.fastq 0-input_files/SRR5972857_R2.fastq
+```
 
 #### 1) Define protein OTUs
 ```
@@ -38,12 +63,13 @@ mkdir 1-reid_otus
 
 ##### 1.1) Merge the paired-end reads
 ```
-usearch -fastq_mergepairs 0-input_files/*_R1*.fastq -relabel @ -fastqout 1-reid_otus/1-untrimmed_merged.fq
+usearch -fastq_mergepairs 0-input_files/SRR5972856_R1.fastq -relabel @ -fastqout 1-reid_otus/1-untrimmed_merged.fq
 ```
 
 ##### 1.2) Remove the primer sequences and filter out reads with too many primer mismatches
 ```
 cutadapt -g ^GYNWWNGGNVTNGAYATGA -o 1-reid_otus/2-trimmed_forward.fastq --untrimmed-output 1-reid_otus/2-untrimmed_forward.fastq 1-reid_otus/1-untrimmed_merged.fq
+
 cutadapt -a SNAAYTGYGTNRTNAAYYT$ -o 1-reid_otus/2-trimmed_forward_reverse.fastq --untrimmed-output 1-reid_otus/2-untrimmed_forward_reverse.fastq 1-reid_otus/2-trimmed_forward.fastq
 ```
 
@@ -61,7 +87,7 @@ for s in 0-input_files/*_R1*.fastq; do
 	echo -e "$sample_name\t$count1\t$count2";	
 done
 ```
-output: ```S1	171379	166197```
+output: ```SRR5972856	171387	166201```
 
 
 ##### 1.4) Dereplication and discargding of singletons
@@ -119,12 +145,10 @@ usearch -cluster_fast 1-reid_otus/12-prot_otus_size.fasta -id 0.9 -sort size -ce
 ```
 
 
-
 #### 2) Compiling arsM protein OTUs database from Jia's primers
 ```
 mkdir 2-jia_otus
 ```
-
 
 ##### 2.0) Recover arsM OTUs from Jia's primers:
 
@@ -293,6 +317,10 @@ Move manually and rename all output files	this way:  ```5-reid_jia_otus/2-*```
 #### 6) Downscaling Reid's reads
 Because of the huge discrepancy between the number of reads from Reid's sequencing (166'197 trimmed reads) and the reads from other sequencing projects based on Jia's primers sets (531 clones), 531 Reid's reads were randomly selected, before proceeding with the rest of the pipeline. This intend to increase the comparability of the diversity spectrum of the 2 primers sets.
 
+```
+mkdir 6-downscaling_test
+```
+
 
 ##### 6.1) Use seqtk (v.1.2) to subsample the trimmed raw reads
 ```
@@ -369,6 +397,139 @@ raxmlHPC -f v -s 6-downscaling_test/13-addfragments_mafft.fasta -t 3-arsm_ref_tr
 ```
 
 Move manually and rename all output files	this way:  ```6-downscaling_test/14-*```
+
+#### 7) Tree annotation
+
+Trees were manually annotated with the interactive tree of life (iTol v.3) on http://itol.embl.de/. They were then merged and further annotated with Inkscape v.091
+
+```
+mkdir 7-itol_annotations
+```
+
+
+
+#### 8) Define protein OTUs
+```
+mkdir 8-7samples_otus
+```
+
+##### 8.1) Merge the paired-end reads
+```
+usearch -fastq_mergepairs 0-input_files/*_R1*.fastq -relabel @ -fastqout 8-7samples_otus/1-untrimmed_merged.fq
+```
+
+##### 8.2) Remove the primer sequences and filter out reads with too many primer mismatches
+```
+cutadapt -g ^GYNWWNGGNVTNGAYATGA -o 8-7samples_otus/2-trimmed_forward.fastq --untrimmed-output 8-7samples_otus/2-untrimmed_forward.fastq 8-7samples_otus/1-untrimmed_merged.fq
+
+cutadapt -a SNAAYTGYGTNRTNAAYYT$ -o 8-7samples_otus/2-trimmed_forward_reverse.fastq --untrimmed-output 8-7samples_otus/2-untrimmed_forward_reverse.fastq 8-7samples_otus/2-trimmed_forward.fastq
+```
+
+##### 8.3) Filter out merged reads with an expect error greater than 1
+```
+usearch -fastq_filter 8-7samples_otus/2-trimmed_forward_reverse.fastq -fastq_maxee 1 -fastaout 8-7samples_otus/3-filtered.fasta
+```
+
+How many sequences were kept with these quality parameters?
+```
+for s in 0-input_files/*_R1*.fastq; do
+	sample_name=$(echo $s | cut -d "." -f 1 | sed "s/...$//g" | cut -d "/" -f 2);
+	count1=$(grep -c "^@${sample_name}" 8-7samples_otus/1-untrimmed_merged.fq);	
+	count2=$(grep -c "^>${sample_name}" 8-7samples_otus/3-filtered.fasta);
+	echo -e "$sample_name\t$count1\t$count2";	
+done
+```
+output: 
+```SRR5972856	171387	166201
+SRR5972857	342190	328212```
+
+
+##### 8.4) Dereplication and discargding of singletons
+```
+usearch -fastx_uniques 8-7samples_otus/3-filtered.fasta -fastaout 8-7samples_otus/4-1_uniques.fasta -relabel Uniq -sizeout
+usearch -sortbysize 8-7samples_otus/4-1_uniques.fasta -fastaout 8-7samples_otus/4-2_uniques_nosingle.fasta -minsize 2
+```
+
+##### 8.5) Translation of uniques sequences to proteins sequences
+```
+transeq 8-7samples_otus/4-2_uniques_nosingle.fasta 8-7samples_otus/5_uniques_translated_6frames.fasta -table 11 -frame=6
+```
+
+##### 8.6) Fishing the correct reading frames by blasting translated uniques reads on arSM reference sequence
+```
+cat 0-input_files/arsm_11protdb_char.fasta 0-input_files/arsm_723protdb_non-char.fasta > 8-7samples_otus/6-1_arsm_734protdb.fasta
+makeblastdb -in 8-7samples_otus/6-1_arsm_734protdb.fasta -out 8-7samples_otus/6-2_arsM_blast_db -dbtype prot
+blastp -query 8-7samples_otus/5_uniques_translated_6frames.fasta -db 8-7samples_otus/6-2_ArsM_blast_db -out 8-7samples_otus/6-3_blast_report.tab -outfmt "6 sseqid qseqid qstart qend evalue bitscore pident" -max_target_seqs 1
+```
+
+##### 8.7) BLAST output parsing
+This in-house R script parses to previous BLAST ouput, selects for each translated sequence which of the reading frame matches ArsM proteins, and extract the correct proteins sequences into a fasta file.
+```
+scripts/RF_fisher.R -b 8-7samples_otus/6-3_blast_report.tab -t 8-7samples_otus/5_uniques_translated_6frames.fasta -f 8-7samples_otus/7-prot.fasta -c 8-7samples_otus/7-parsed_blast_report.csv
+```
+
+##### 8.8) Extract uniques proteins sequences
+```
+usearch -fastx_uniques 8-7samples_otus/7-prot.fasta -fastaout 8-7samples_otus/8-prot_uniques.fasta -relabel uniq_prot -sizeout
+```
+
+##### 8.9) Define clusters with 97%-similarity threshold
+```
+usearch -cluster_otus 8-7samples_otus/8-prot_uniques.fasta -otus 8-7samples_otus/9-prot_otus.fasta -relabel Otu
+```
+
+##### 8.10) Translation of the reads to protein sequences (in all 6 reading frames)
+```
+transeq 8-7samples_otus/2-trimmed_forward_reverse.fastq 8-7samples_otus/10-trimmed_forward_reverse_translated.fasta -table 11 -frame=6
+```
+
+##### 8.11) Build OTU table (based on 97%-similarity threshold)
+```
+usearch -usearch_global 8-7samples_otus/10-trimmed_forward_reverse_translated.fasta -db 8-7samples_otus/9-prot_otus.fasta -id .97 -otutabout 8-7samples_otus/11-prot_otu_table.txt
+```
+
+
+##### 8.12) Create DIAMOND database
+
+Merge 2 database fasta files
+```
+cat 0-input_files/arsm_723protdb_non-char.fasta 0-input_files/arsm_11protdb_char.fasta | tr '_bacterium' '_' > 0-input_files/arsm_734prot_db.fasta
+```
+Remove manually in ```0-input_files/arsm_734prot_db.fasta``` the two endosymbionts and save it as ```0-input_files/arsm_732prot_db.fasta````
+
+Create a diamond database
+```
+diamond makedb --in 0-input_files/arsm_732prot_db.fasta --db 8-7samples_otus/12-arsm_732prot_db
+```
+
+
+##### 8.13) Blast proteins OTUs on arsm protein database
+```
+diamond blastp --query 8-7samples_otus/9-prot_otus.fasta --db 8-7samples_otus/12-arsm_732prot_db --daa 8-7samples_otus/13-1-reid_otus_diamond
+diamond view -a 8-7samples_otus/13-1-reid_otus_diamond.daa > 8-7samples_otus/13-2-reid_otus_diamond.txt
+```
+
+
+##### 8.14) LCA algorithm with MEGAN
+
+* Open MEGAN 6
+* File > Meganize DAA File
+* Files: ```8-tax_annotation/13-1-reid_otus_diamond```
+* Taxonomy: Tick 'Parse Taxon Names' and 'Use Id parsing'
+* LCA algorithm: Weighted algorithm with default paramaters
+* Open meganized file
+* Select all
+* Click on 'Inspect the read-to-functions assignment'
+* Expand all taxons
+* Copy paste, and save as ```8-tax_annotation/14-otu_annotations_megan.txt```
+
+##### 8.7) Analysis the MEGAN output file
+
+Run ```extract_megan_annotations.R``` on R, whose output is an OTU table that contains taxonomic annotations, saved as ```8-7samples_otus/15-prot_otu_table_tax.txt```.
+
+
+The full taxonomic path of OTUs annotated as 'Actinobacteria <phylum>' by LCA could not be retrieved. For those, the taxonomic path was manually written in ```8-7samples_otus/15-prot_otu_table_tax.txt```. It concerned Otu2750, Otu3624, Otu4069, Otu4285, Otu4713, Otu5012, Otu5535, Otu604, Otu6046, Otu6563, Otu7358, Otu7558, Otu8097, and Otu8763
+
 
 
 
