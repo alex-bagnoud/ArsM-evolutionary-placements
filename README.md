@@ -9,7 +9,7 @@ Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, an
 
 1) Raw fastq files to download from NCBI SRA (see below)
 
-2) ArsM database files ( available here: [ArsM-evolutionary-placements/0-input_files/]/0-input_files)
+2) ArsM database files, available here: [ArsM-evolutionary-placements/0-input_files/](/0-input_files)
 
 
 #### Primers used:
