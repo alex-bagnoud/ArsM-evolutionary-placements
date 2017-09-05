@@ -6,7 +6,7 @@ Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, an
 
 #### Table of content
 
-1. [Input files](#download-fastq-files-from-sra)
+1. [Input files](#\0download-fastq-files-from-sra)
 2. [Example2](#example2)
 3. [Third Example](#third-example)
 
@@ -50,7 +50,7 @@ Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, an
 * MEGAN v.6.7.11
 * fastq-dump v.2.8.2 from SRA Toolkit
 
-#### 0 Download fastq files from SRA
+#### 0) Download fastq files from SRA
 
 ##### 0.1) Download the fastq file of the paddy soil sample
 ```
