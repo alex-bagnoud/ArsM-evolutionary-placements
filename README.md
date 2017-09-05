@@ -6,7 +6,13 @@ Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, an
 
 #### Table of content
 
-**[Installation Instructions](#0-Download-fastq-files-from-SRA)**<br>
+1. [Example](#example)
+2. [Example2](#example2)
+3. [Third Example](#third-example)
+
+## Example
+## Example2
+## Third Example
 
 
 
