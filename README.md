@@ -2,7 +2,7 @@
 
 This script describes the processing of Illumina MiSeq reads from arsM amplicons sequencing. The results were published here:
 
-Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, and Rizlan Bernier-Latmani (2017). Arsenic Methylation Dynamics in a Rice Paddy Soil Anaerobic Enrichment Culture. Environmental Science & Technology. DOI: 10.1021/acs.est.7b02970
+Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, and Rizlan Bernier-Latmani (2017). [**Arsenic Methylation Dynamics in a Rice Paddy Soil Anaerobic Enrichment Culture**](https://dx.doi.org/10.1021/acs.est.7b02970). Environmental Science & Technology. DOI: 10.1021/acs.est.7b02970
 
 
 #### Input files
@@ -24,7 +24,7 @@ Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, an
 * blast version 2.2.30+
 * EMBOSS v.6.3.1
 * R version 3.3.1 (2016-06-21)
-* MAFFT version 7: ttp://mafft.cbrc.jp/alignment/server/
+* MAFFT version 7: http://mafft.cbrc.jp/alignment/server/
 * IQ-TREE 1.5.3: http://iqtree.cibiv.univie.ac.at/
 * BMGE v. 1.12 on Galaxy@Pasteur
 * BLAST 2.2.30+
