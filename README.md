@@ -521,7 +521,7 @@ diamond view -a 8-7samples_otus/13-1-reid_otus_diamond.daa > 8-7samples_otus/13-
 * Expand all taxons
 * Copy paste, and save as ```8-tax_annotation/14-otu_annotations_megan.txt```
 
-##### 8.7) Analysis the MEGAN output file
+##### 8.15) Analysis the MEGAN output file
 
 Run ```extract_megan_annotations.R``` on R, whose output is an OTU table that contains taxonomic annotations, saved as ```8-7samples_otus/15-prot_otu_table_tax.txt```.
 
