@@ -50,7 +50,7 @@ Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, an
 * MEGAN v.6.7.11
 * fastq-dump v.2.8.2 from SRA Toolkit
 
-#### 0 Download fastq files from SRA
+#### Download fastq files from SRA
 
 ##### 0.1) Download the fastq file of the paddy soil sample
 ```
