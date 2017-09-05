@@ -29,10 +29,9 @@ Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, an
 * BMGE v. 1.12 on Galaxy@Pasteur
 * BLAST 2.2.30+
 * RAxML v.8.2.9
-* RF_fisher.R (in-house R script)
-* add_size_to_otus.R (in-house R script)
-* add_size_to_otus.R (in-house R script)
-* extract_megan_annotations.R (in-house R script)
+* [RF_fisher.R](scripts/RF_fisher.R) (in-house R script)
+* [add_size_to_otus.R](scripts/add_size_to_otus.R) (in-house R script)
+* [extract_megan_annotations.R](scripts/extract_megan_annotations.R) (in-house R script)
 * seqtk v.1.2 (https://github.com/lh3/seqtk)
 * iTOL v.3 (http://itol.embl.de/)
 * Inkscape v.0.91
@@ -439,7 +438,7 @@ for s in 0-input_files/*_R1*.fastq; do
 	echo -e "$sample_name\t$count1\t$count2";	
 done
 ```
-output: 
+output:
 ```SRR5972856	171387	166201
 SRR5972857	342190	328212```
 
