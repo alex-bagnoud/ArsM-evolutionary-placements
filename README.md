@@ -4,91 +4,6 @@ This script describes the processing of Illumina MiSeq reads from arsM amplicons
 
 Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, and Rizlan Bernier-Latmani (2017). [**Arsenic Methylation Dynamics in a Rice Paddy Soil Anaerobic Enrichment Culture**](https://dx.doi.org/10.1021/acs.est.7b02970). Environmental Science & Technology. DOI: 10.1021/acs.est.7b02970
 
-#### Table of content
-
-- [ArsM-evolutionary-placements](#arsm-evolutionary-placements)
-      - [Table of content](#table-of-content)
-  * [Example](#example)
-  * [Example2](#example2)
-  * [Third Example](#third-example)
-      - [Input files](#input-files)
-      - [Primers used:](#primers-used-)
-      - [Programs used:](#programs-used-)
-      - [0) Download fastq files from SRA](#0--download-fastq-files-from-sra)
-        * [0.1) Download the fastq file of the paddy soil sample](#01--download-the-fastq-file-of-the-paddy-soil-sample)
-        * [0.2) Download the fastq file of the anaerobic enrichment cultures](#02--download-the-fastq-file-of-the-anaerobic-enrichment-cultures)
-      - [1) Define protein OTUs](#1--define-protein-otus)
-        * [1.1) Merge the paired-end reads](#11--merge-the-paired-end-reads)
-        * [1.2) Remove the primer sequences and filter out reads with too many primer mismatches](#12--remove-the-primer-sequences-and-filter-out-reads-with-too-many-primer-mismatches)
-        * [1.3) Filter out merged reads with an expect error greater than 1](#13--filter-out-merged-reads-with-an-expect-error-greater-than-1)
-        * [1.4) Dereplication and discargding of singletons](#14--dereplication-and-discargding-of-singletons)
-        * [1.5) Translation of uniques sequences to proteins sequences](#15--translation-of-uniques-sequences-to-proteins-sequences)
-        * [1.6) Fishing the correct reading frames by blasting translated uniques reads on arSM reference sequence](#16--fishing-the-correct-reading-frames-by-blasting-translated-uniques-reads-on-arsm-reference-sequence)
-        * [1.7) BLAST output parsing](#17--blast-output-parsing)
-        * [1.8) Extract uniques proteins sequences](#18--extract-uniques-proteins-sequences)
-        * [1.9) Define clusters with 97%-similarity threshold](#19--define-clusters-with-97--similarity-threshold)
-        * [1.10) Translation of the reads to protein sequences (in all 6 reading frames)](#110--translation-of-the-reads-to-protein-sequences--in-all-6-reading-frames-)
-        * [1.11) Build OTU table (based on 97%-similarity threshold)](#111--build-otu-table--based-on-97--similarity-threshold-)
-        * [1.12) Add size information for each OTU](#112--add-size-information-for-each-otu)
-        * [1.13) Cluster protein OTUs sequences at 90% similarity](#113--cluster-protein-otus-sequences-at-90--similarity)
-      - [2) Compiling arsM protein OTUs database from Jia's primers](#2--compiling-arsm-protein-otus-database-from-jia-s-primers)
-        * [2.0) Recover arsM OTUs from Jia's primers:](#20--recover-arsm-otus-from-jia-s-primers-)
-        * [2.1) translate dna otus into prot otus](#21--translate-dna-otus-into-prot-otus)
-        * [2.2) Filter out correct reading frame](#22--filter-out-correct-reading-frame)
-        * [2.3) BLAST output parsing](#23--blast-output-parsing)
-        * [2.4) Cluster Jia OTUs sequences at 90% similarity](#24--cluster-jia-otus-sequences-at-90--similarity)
-      - [3) Computing a arsM phylogenetic tree](#3--computing-a-arsm-phylogenetic-tree)
-        * [3.1) Cat both protein OTUs files](#31--cat-both-protein-otus-files)
-        * [3.2) Re-order databases sequences](#32--re-order-databases-sequences)
-        * [3.3) Center the ArsM db of uncharacterized proteins using a similarity treshold of 80% with ArsM OTUs:](#33--center-the-arsm-db-of-uncharacterized-proteins-using-a-similarity-treshold-of-80--with-arsm-otus-)
-        * [3.4) Add biochemically-characterized sequences to the new set of reference seqences](#34--add-biochemically-characterized-sequences-to-the-new-set-of-reference-seqences)
-        * [3.5) Cluster centered database at 90% similarity](#35--cluster-centered-database-at-90--similarity)
-        * [3.6) Alignement with mafft](#36--alignement-with-mafft)
-        * [3.7) Alignement parsing with BMGE](#37--alignement-parsing-with-bmge)
-        * [3.8) IQ-TREE](#38--iq-tree)
-      - [4) EPA analysis of Jia's OTUs](#4--epa-analysis-of-jia-s-otus)
-        * [4.1) Alignement with mafft](#41--alignement-with-mafft)
-        * [4.2) EPA analysis with RAxML](#42--epa-analysis-with-raxml)
-      - [5) EPA analysis of Reid's OTUs](#5--epa-analysis-of-reid-s-otus)
-        * [5.1) Alignement with mafft](#51--alignement-with-mafft)
-        * [5.2) EPA analysis with RAxML](#52--epa-analysis-with-raxml)
-      - [6) Downscaling Reid's reads](#6--downscaling-reid-s-reads)
-        * [6.1) Use seqtk (v.1.2) to subsample the trimmed raw reads](#61--use-seqtk--v12--to-subsample-the-trimmed-raw-reads)
-        * [6.2) Dereplication and discargding of singletons](#62--dereplication-and-discargding-of-singletons)
-        * [6.3) Translation of uniques sequences to proteins sequences](#63--translation-of-uniques-sequences-to-proteins-sequences)
-        * [6.4) Fishing the correct reading frames by blasting translated uniques reads on arSM reference sequence](#64--fishing-the-correct-reading-frames-by-blasting-translated-uniques-reads-on-arsm-reference-sequence)
-        * [6.5) BLAST output parsing](#65--blast-output-parsing)
-        * [6.6) Extract uniques proteins sequences](#66--extract-uniques-proteins-sequences)
-        * [6.7) Define clusters with 97%-similarity threshold](#67--define-clusters-with-97--similarity-threshold)
-        * [6.8) Translation of the reads to protein sequences (in all 6 reading frames)](#68--translation-of-the-reads-to-protein-sequences--in-all-6-reading-frames-)
-        * [6.9) Build OTU table (based on 97%-similarity threshold)](#69--build-otu-table--based-on-97--similarity-threshold-)
-        * [6.10) Add size information for each OTU](#610--add-size-information-for-each-otu)
-        * [6.11) Cluster protein OTUs sequences at 90% similarity](#611--cluster-protein-otus-sequences-at-90--similarity)
-        * [6.12) Alignement with mafft](#612--alignement-with-mafft)
-        * [6.13) Parse the file to make it RAxML-compatible](#613--parse-the-file-to-make-it-raxml-compatible)
-        * [6.14) EPA analysis with RAxML](#614--epa-analysis-with-raxml)
-      - [7) Tree annotation](#7--tree-annotation)
-      - [8) Define protein OTUs](#8--define-protein-otus)
-        * [8.1) Merge the paired-end reads](#81--merge-the-paired-end-reads)
-        * [8.2) Remove the primer sequences and filter out reads with too many primer mismatches](#82--remove-the-primer-sequences-and-filter-out-reads-with-too-many-primer-mismatches)
-        * [8.3) Filter out merged reads with an expect error greater than 1](#83--filter-out-merged-reads-with-an-expect-error-greater-than-1)
-        * [8.4) Dereplication and discargding of singletons](#84--dereplication-and-discargding-of-singletons)
-        * [8.5) Translation of uniques sequences to proteins sequences](#85--translation-of-uniques-sequences-to-proteins-sequences)
-        * [8.6) Fishing the correct reading frames by blasting translated uniques reads on arSM reference sequence](#86--fishing-the-correct-reading-frames-by-blasting-translated-uniques-reads-on-arsm-reference-sequence)
-        * [8.7) BLAST output parsing](#87--blast-output-parsing)
-        * [8.8) Extract uniques proteins sequences](#88--extract-uniques-proteins-sequences)
-        * [8.9) Define clusters with 97%-similarity threshold](#89--define-clusters-with-97--similarity-threshold)
-        * [8.10) Translation of the reads to protein sequences (in all 6 reading frames)](#810--translation-of-the-reads-to-protein-sequences--in-all-6-reading-frames-)
-        * [8.11) Build OTU table (based on 97%-similarity threshold)](#811--build-otu-table--based-on-97--similarity-threshold-)
-        * [8.12) Create DIAMOND database](#812--create-diamond-database)
-        * [8.13) Blast proteins OTUs on arsm protein database](#813--blast-proteins-otus-on-arsm-protein-database)
-        * [8.14) LCA algorithm with MEGAN](#814--lca-algorithm-with-megan)
-        * [8.7) Analysis the MEGAN output file](#87--analysis-the-megan-output-file)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
-
-
 
 #### Input files
 
@@ -140,7 +55,7 @@ mv SRR5972857_1.fastq 0-input_files/SRR5972857_R1.fastq
 mv SRR5972857_2.fastq 0-input_files/SRR5972857_R2.fastq
 ```
 
-#### 1) Define protein OTUs
+#### 1) Define protein OTUs from the paddy soil sample
 ```
 mkdir 1-reid_otus
 ```
@@ -276,7 +191,7 @@ usearch -cluster_fast 2-jia_otus/3-jia_prot.fasta -id 0.9 -sort length -centroid
 
 
 
-#### 3) Computing a arsM phylogenetic tree
+#### 3) Computing a arsM phylogenetic tree (reference tree)
 ```
 mkdir 3-arsm_ref_tree
 ```
