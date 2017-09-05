@@ -438,8 +438,8 @@ for s in 0-input_files/*_R1*.fastq; do
 	echo -e "$sample_name\t$count1\t$count2";	
 done
 ```
-output: ```SRR5972856	171387	166201
-SRR5972857	342190	328212```
+output: ```SRR5972856	171387	166201```
+```SRR5972857	342190	328212```
 
 
 ##### 8.4) Dereplication and discargding of singletons
