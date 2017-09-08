@@ -22,7 +22,7 @@ Fragments of arsM gene sequences amplified by primers designed by Jia, et al. an
 
 In order the build a reference tree of ArsM proteins for classifying ArsM OTUs, the 726 protein database was simplified. The 11 biochemically characterized ArsM proteins were first placed aside. Then, only reference proteins that share at least 80% similarity with any of the OTUs (clustered at 90% similarity) were retained, using USEARCH. Biochemically characterized ArsM proteins were then placed back in the set of reference sequences. Finally, the selected reference sequences were clustered based on a 90%-similarity threshold with USEARCH. The 175 selected proteins sequences were then aligned with MAFFT v.7 (http://mafft.cbrc.jp/alignment/server/), using default parameters. The alignment was then parsed using BMGE v.1.12 on a Galaxy platform, in order to remove positions containing more than 90% gaps. Finally, the parsed alignment was used to compute a tree with IQ-TREE v. 1.5.3, using ultrafast branch supports and default parameters of the IQ-TREE web server.
 
-##### [4) Evolutionary placement of Jia's](#4-epa-analysis-of-jias-otus) and [5) Reid's OTUs on the reference tree](https://github.com/alex-bagnoud/ArsM-evolutionary-placements#5-epa-analysis-of-reids-otus)
+##### [4) Evolutionary placement of Jia's](#4-epa-analysis-of-jias-otus) and [5) Reid's OTUs](https://github.com/alex-bagnoud/ArsM-evolutionary-placements#5-epa-analysis-of-reids-otus) on the reference tree
 
 The two sets of OTUs were then added to the reference alignment, using the “addfragments” option in MAFFT. Both new alignments were then analyzed by RAxML v.8.2.9 in order to place OTUs on the reference tree. Only the best placement of each OTU was retained.
 
