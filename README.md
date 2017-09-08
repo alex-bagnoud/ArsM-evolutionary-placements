@@ -4,18 +4,50 @@ This script describes the processing of Illumina MiSeq reads from arsM amplicons
 
 Matthew C. Reid, Julien Maillard, Alexandre Bagnoud, Leia Falquet, Phu Le Vo, and Rizlan Bernier-Latmani (2017). [**Arsenic Methylation Dynamics in a Rice Paddy Soil Anaerobic Enrichment Culture**](https://dx.doi.org/10.1021/acs.est.7b02970). Environmental Science & Technology. DOI: 10.1021/acs.est.7b02970
 
+#### Pipeline summary
+
+##### Molecular analyses
+
+The PCR reaction mix for amplification of arsM fragments using the new primers arsM-309F (5’- GYI WWN GGI VTN GAY ATG A-3’)/ arsM-470R (5’- ARR TTI AYI ACR CAR TTN S-3’) contained 2.5 µL 10x PCR buffer, 2 µL dNTPs (2.5 mM each), 5 µL each of the reverse and forward primer (20 mM each), 0.5 µL Taq polymerase (Takara), with a final Mg<sup>2+</sup> concentration of 2.5 mM and balance water. The high primer concentration was necessary because of the highly degenerate nature of each primer. The thermocycling program consisted of a 10 min denaturation at 95°C, 30 cycles at 95°C for 1 min, 54°C for 1 min, and 72°C for 1 min, followed by elongation at 72°C for 10 min. The primers amplify a 161 bp amplicon.
+
+##### 1) Defining ArsM OTUs
+
+Illumina paired-end reads from sequencing of PCR arsM amplicons from the original paddy soil were merged with USEARCH v.9.2.64, primers were trimmed-off with cutadapt v.1.12, and filtered out with USEARCH in case of an expected error greater than 1. Reads were then dereplicated and singletons were discarded with USEARCH. Trimmed and unique reads were then translated to proteins in all 6 possible reading frames with Emboss v.6.3.1. For each translated read, the correct reading frame was “fished” using BLAST v.2.2.30+ and an in-house R script (R v.3.3.1) , using as database the 726-protein ArsM database developed in-house and an e-value of 10<sup>-6</sup> , and an in-house R script (R v.3.3.1). USEARCH was then used to extract unique protein sequences, discard chimeric sequences and to define protein OTUs, based on a similarity threshold of 97%. The trimmed reads were also translated to proteins in all 6 possible reading frames with EMBOSS, in order to count the occurrence of each OTU with USEARCH. Finally, with the aim to perform evolutionary placement algorithm (EPA), number of OTUs were decreased by clustering them based on a 90%-similarity threshold, and by using as centroids the most abundant sequences, based on the count of each OTU.
+
+##### 2) Defining ArsM OTUs from amplicons based on primers of Jia et al.
+
+Fragments of arsM gene sequences amplified by primers designed by Jia, et al. and published in previous studies were retrieved from NCBI, using accession numbers JQ924198 to JQ924282, KP060920 to KP060962, and KR051692 to KR051724. This set of nucleotide sequences was translated to protein sequences, following the same procedure explained earlier. Protein OTUs were also clustered with a 90%-similarity threshold using USEARCH.
+
+##### 3) Construction of an ArsM reference tree
+
+In order the build a reference tree of ArsM proteins for classifying ArsM OTUs, the 726 protein database was simplified. The 11 biochemically characterized ArsM proteins were first placed aside. Then, only reference proteins that share at least 80% similarity with any of the OTUs (clustered at 90% similarity) were retained, using USEARCH. Biochemically characterized ArsM proteins were then placed back in the set of reference sequences. Finally, the selected reference sequences were clustered based on a 90%-similarity threshold with USEARCH. The 175 selected proteins sequences were then aligned with MAFFT v.7 (http://mafft.cbrc.jp/alignment/server/), using default parameters. The alignment was then parsed using BMGE v.1.12 on a Galaxy platform, in order to remove positions containing more than 90% gaps. Finally, the parsed alignment was used to compute a tree with IQ-TREE v. 1.5.3, using ultrafast branch supports and default parameters of the IQ-TREE web server.
+
+##### 4 + 5) Evolutionary placement of Jia's and Reid's OTUs on the reference tree
+
+The two sets of OTUs were then added to the reference alignment, using the “addfragments” option in MAFFT. Both new alignments were then analyzed by RAxML v.8.2.9 in order to place OTUs on the reference tree. Only the best placement of each OTU was retained.
+
+##### 6) Downscaling Reid's reads
+
+In order to account for the great difference in sequencing depths between arsMF1/arsMR2 and arsM-390F/arsM-470R reads (531 clones and 166’197 good quality reads, respectively), the latter was randomly subsampled down to 531 reads using seqtk v.1.2, representing 0.3% of the total reads. This subset was then processed exactly as described for the complete set of arsM-390F/arsM-470R reads.
+
+##### 7) Manual tree annotation
+
+iTOL v.3 was then used for displaying and annotating trees. Finally, Inkscape v.0.91 was used for merging the reference tree with the evolutionary placements of the two sets of OTUs.
+
+##### 8) Annotation of ArsM protein OTUs
+
+Taxonomic annotation was performed using DIAMOND to align protein OTUs against the ArsM database and MEGAN to determine the lowest common ancestor (LCA) node in the taxonomy for all OTUs with which there is a significant alignment.
+
+#### Selected outputs
+
+
+
 
 #### Input files
 
 1) Raw fastq files to download from NCBI SRA (see below)
 
 2) ArsM database files, available here: [ArsM-evolutionary-placements/0-input_files/](/0-input_files)
-
-
-#### Primers used:
-330F (5’- GYI WWN GGI VTN GAY ATG A-3’)
-
-385R (5’- ARR TTI AYI ACR CAR TTN S-3’) 
 
 
 #### Programs used:
@@ -407,7 +439,7 @@ mkdir 7-itol_annotations
 
 
 
-#### 8) Define protein OTUs
+#### 8) Annotation of ArsM OTUs
 ```
 mkdir 8-7samples_otus
 ```
