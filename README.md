@@ -41,7 +41,6 @@ Taxonomic annotation was performed using DIAMOND to align protein OTUs against t
 #### Input files
 
 1) Raw fastq files to download from NCBI SRA (see below)
-
 2) ArsM database files, available here: [ArsM-evolutionary-placements/0-input_files/](/0-input_files)
 
 #### Selected outputs
@@ -53,9 +52,11 @@ Taxonomic annotation was performed using DIAMOND to align protein OTUs against t
 5. [Evolutionary placement of Reid's OTUs on the reference tree](5-epa_reid_otus/2-RAxML_portableTree.epa_reid.jplace)
 6. [Evolutionary placement of Reid's OTUs on the reference tree (downscaled)](6-downscaling_test/14-RAxML_portableTree.epa_reid_ds.jplace)
 7. Tree figures:
+
 ..* [Evolutionary placement of Reid's and Jia's OTUs on the reference tree](7-itol_annotations/combined_tree_sizeproportion_ufb95_reid_down_scaled_v4.svg)
 ..* [Evolutionary placement of Reid's (downscaled) and Jia's OTUs on the reference tree](7-itol_annotations/combined_tree_sizeproportion_ufb95_v3.svg)
 8. Arsm OTUs annotations from both paddy soil sample (S1) and enrichment culture samples (S2 to S7):
+
 ..* [Fasta file containing ArsM OTUs sequences from both the paddy soil sample and the enrichment cultures](8-7samples_otus/9-prot_otus.fasta)
 ..* [Corresponding OTU table with taxonomic annotations using LCA algorithm](8-7samples_otus/15-prot_otu_table_tax.txt)
 
